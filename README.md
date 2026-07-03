@@ -12,7 +12,7 @@
   <a href="https://pub.dev/packages/all_image_compress"><img src="https://img.shields.io/pub/v/all_image_compress.svg?label=pub.dev" alt="pub version"></a>
   <a href="https://pub.dev/packages/all_image_compress/score"><img src="https://img.shields.io/pub/likes/all_image_compress?label=likes" alt="pub likes"></a>
   <a href="https://pub.dev/packages/all_image_compress/score"><img src="https://img.shields.io/pub/points/all_image_compress?label=pub%20points" alt="pub points"></a>
-  <a href="https://github.com/seu-org/all_image_compress/blob/main/LICENSE"><img src="https://img.shields.io/github/license/seu-org/all_image_compress" alt="license"></a>
+  <a href="https://github.com/CriandoGames/all_image_compress/blob/main/LICENSE"><img src="https://img.shields.io/github/license/CriandoGames/all_image_compress" alt="license"></a>
   <img src="https://img.shields.io/badge/plataformas-6%2F6-brightgreen" alt="6 plataformas">
 </p>
 
