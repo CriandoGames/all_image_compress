@@ -50,8 +50,8 @@ class CompressResult {
     final comp = _formatBytes(compressedSizeBytes);
     final saved = savedPercent;
     final sign = saved >= 0 ? '-' : '+';
-    return '${orig} → $comp ($sign${saved.abs().toStringAsFixed(1)}%) '
-        '${width}×${height}px [${format.name.toUpperCase()}]';
+    return '$orig → $comp ($sign${saved.abs().toStringAsFixed(1)}%) '
+        '$width×${height}px [${format.name.toUpperCase()}]';
   }
 
   static String _formatBytes(int bytes) {

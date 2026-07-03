@@ -12,6 +12,6 @@
 ///   config: CompressConfig(quality: 80),
 /// );
 /// ```
-library all_image_compress_io;
+library;
 
 export 'src/all_image_compress_io.dart';

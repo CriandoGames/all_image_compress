@@ -39,7 +39,7 @@
 ///   config: CompressConfig(quality: 75),
 /// );
 /// ```
-library all_image_compress;
+library;
 
 export 'src/all_image_compress_base.dart';
 export 'src/compress_config.dart';
