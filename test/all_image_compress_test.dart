@@ -201,18 +201,18 @@ void main() {
       expect(img.decodePng(result.bytes), isNotNull);
     });
 
-    test('higher quality (lower compression level) is larger for PNG', () {
-      final loose = AllImageCompress.fromBytesSync(
+    test('quality=100 (level 9, max compression) produces smaller PNG than quality=0', () {
+      final highQ = AllImageCompress.fromBytesSync(
         bytes: sourcePng,
-        config: const CompressConfig(quality: 100), // level 0, no compression
+        config: const CompressConfig(quality: 100), // level 9 → max compression
       );
-      final tight = AllImageCompress.fromBytesSync(
+      final lowQ = AllImageCompress.fromBytesSync(
         bytes: sourcePng,
-        config: const CompressConfig(quality: 0), // level 9, max compression
+        config: const CompressConfig(quality: 0), // level 0 → no compression
       );
-      // Tight compression should produce smaller (or equal) output
-      expect(tight.compressedSizeBytes,
-          lessThanOrEqualTo(loose.compressedSizeBytes));
+      // quality=100 → zlib level 9 → smallest file
+      expect(highQ.compressedSizeBytes,
+          lessThanOrEqualTo(lowQ.compressedSizeBytes));
     });
   });
 

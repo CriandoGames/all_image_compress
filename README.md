@@ -106,6 +106,7 @@ await compressFileToFile(
 final results = await AllImageCompress.batchUniform(
   images: [img1, img2, img3],
   config: CompressConfig(quality: 70, maxWidth: 800),
+  maxConcurrent: 3, // limite de isolates simultâneos (default: 3)
   onProgress: (done, total) => print('$done/$total'),
 );
 
@@ -116,6 +117,7 @@ final results = await AllImageCompress.batch(
     (coverPhoto,   CompressConfig(quality: 75, maxWidth: 1920)),
     (thumbnail,    CompressConfig(quality: 60, maxWidth: 200)),
   ],
+  maxConcurrent: 2, // para galerias grandes, mantenha 2–4
 );
 ```
 
@@ -125,7 +127,7 @@ final results = await AllImageCompress.batch(
 
 | Parâmetro | Tipo | Padrão | Descrição |
 |-----------|------|--------|-----------|
-| `quality` | `int` | `85` | 0–100. JPEG: qualidade visual. PNG: nível de compressão (100=rápido, 0=menor). |
+| `quality` | `int` | `85` | 0–100. JPEG: qualidade visual. PNG: nível de compressão zlib (100=menor arquivo/mais lento, 0=maior arquivo/mais rápido). |
 | `maxWidth` | `int?` | `null` | Reduz escala se a largura exceder este valor. `null` = sem limite. |
 | `maxHeight` | `int?` | `null` | Reduz escala se a altura exceder este valor. `null` = sem limite. |
 | `outputFormat` | `CompressFormat?` | `null` | Formato de saída. `null` = mesmo do input (WebP → JPEG). |
@@ -162,7 +164,7 @@ result.summary             // String — resumo legível em uma linha
 | GIF     | ✅      | ✅    | ignorada  |
 | BMP     | ✅      | ✅    | ignorada  |
 | TIFF    | ✅      | ✅    | ignorada  |
-| WebP    | ✅      | ❌ → JPEG/PNG | — |
+| WebP    | ✅      | ❌ → JPEG | — |
 | TGA     | ✅      | ❌    | —         |
 | ICO     | ✅      | ❌    | —         |
 
