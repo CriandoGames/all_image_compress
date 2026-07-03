@@ -197,7 +197,7 @@ A maioria das libs de compressão (flutter_image_compress, fast_image_compress) 
 
 ## 👥 Contribuidores
 
-[![Contributors](https://contrib.rocks/image?repo=CriandoGames/)](https://github.com/CriandoGames//graphs/contributors)
+[![Contributors](https://contrib.rocks/image?repo=CriandoGames/all_image_compress)](https://github.com/CriandoGames/all_image_compress/graphs/contributors)
 
 Made with [contrib.rocks](https://contrib.rocks).
 
