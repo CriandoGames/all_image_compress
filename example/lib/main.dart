@@ -136,13 +136,14 @@ class _CompressPageState extends State<CompressPage> {
     final images = await Future.wait(
       List.generate(
         8,
-        (i) => Isolate.run(
-          () => _makeColorJpeg([200 + i * 100, 150 + i * 75, i]),
-        ),
+        (i) =>
+            Isolate.run(() => _makeColorJpeg([200 + i * 100, 150 + i * 75, i])),
       ),
     );
 
-    setState(() => _status = 'Executando batch de 8 imagens (maxConcurrent: 3)…');
+    setState(
+      () => _status = 'Executando batch de 8 imagens (maxConcurrent: 3)…',
+    );
 
     final results = await AllImageCompress.batchUniform(
       images: images,
@@ -197,8 +198,9 @@ class _CompressPageState extends State<CompressPage> {
               title: '🗜️ Demo',
               child: Text(
                 _status,
-                style: theme.textTheme.bodyMedium
-                    ?.copyWith(color: theme.colorScheme.onSurfaceVariant),
+                style: theme.textTheme.bodyMedium?.copyWith(
+                  color: theme.colorScheme.onSurfaceVariant,
+                ),
               ),
             ),
             const SizedBox(height: 12),
@@ -234,23 +236,27 @@ class _CompressPageState extends State<CompressPage> {
             // ── Resultados: qualidade ─────────────────────────────────────────
             if (_qualityResults.isNotEmpty) ...[
               _SectionCard(
-                title: '📊 Qualidade variada — original: ${_formatSize(_originalSize)}',
+                title:
+                    '📊 Qualidade variada — original: ${_formatSize(_originalSize)}',
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     ..._qualityResults.map(
                       (r) => _ResultRow(
-                        label: 'Q${r.quality} — ${r.result.width}×${r.result.height}px',
+                        label:
+                            'Q${r.quality} — ${r.result.width}×${r.result.height}px',
                         size: _formatSize(r.result.compressedSizeBytes),
-                        savings: '-${r.result.savedPercent.toStringAsFixed(1)}%',
+                        savings:
+                            '-${r.result.savedPercent.toStringAsFixed(1)}%',
                         color: _qualityColor(r.quality),
                       ),
                     ),
                     const SizedBox(height: 12),
                     Text(
                       'Preview (qualidade 20):',
-                      style: theme.textTheme.bodySmall
-                          ?.copyWith(color: theme.colorScheme.onSurfaceVariant),
+                      style: theme.textTheme.bodySmall?.copyWith(
+                        color: theme.colorScheme.onSurfaceVariant,
+                      ),
                     ),
                     const SizedBox(height: 6),
                     ClipRRect(
@@ -277,8 +283,7 @@ class _CompressPageState extends State<CompressPage> {
                           label:
                               'Imagem ${e.$1 + 1} — ${e.$2!.width}×${e.$2!.height}px',
                           size: _formatSize(e.$2!.compressedSizeBytes),
-                          savings:
-                              '-${e.$2!.savedPercent.toStringAsFixed(1)}%',
+                          savings: '-${e.$2!.savedPercent.toStringAsFixed(1)}%',
                           color: theme.colorScheme.tertiary,
                         ),
                       )
@@ -351,8 +356,9 @@ class _SectionCard extends StatelessWidget {
           children: [
             Text(
               title,
-              style: theme.textTheme.titleSmall
-                  ?.copyWith(fontWeight: FontWeight.bold),
+              style: theme.textTheme.titleSmall?.copyWith(
+                fontWeight: FontWeight.bold,
+              ),
             ),
             const SizedBox(height: 12),
             child,
@@ -391,19 +397,18 @@ class _ResultRow extends StatelessWidget {
           ),
           const SizedBox(width: 10),
           Expanded(child: Text(label, style: const TextStyle(fontSize: 13))),
-          Text(size,
-              style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 13)),
+          Text(
+            size,
+            style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 13),
+          ),
           const SizedBox(width: 8),
           Container(
             padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
             decoration: BoxDecoration(
-              color: color.withOpacity(0.15),
+              color: color.withValues(alpha: 0.15),
               borderRadius: BorderRadius.circular(4),
             ),
-            child: Text(
-              savings,
-              style: TextStyle(color: color, fontSize: 11),
-            ),
+            child: Text(savings, style: TextStyle(color: color, fontSize: 11)),
           ),
         ],
       ),
