@@ -1,5 +1,3 @@
-// ignore_for_file: avoid_print
-
 import 'dart:typed_data';
 
 import 'package:image/image.dart' as img;
@@ -42,7 +40,17 @@ CompressResult _doCompress(_WorkerParams p) {
 
   // ── 2. EXIF orientation correction ─────────────────────────────────────────
   if (config.autoCorrectOrientation) {
+    // Aplica a rotação física e remove o tag de orientação do EXIF.
     decoded = img.bakeOrientation(decoded);
+  }
+
+  // ── 2b. Strip EXIF ────────────────────────────────────────────────────────
+  // Por padrão (keepExif: false) limpa todos os metadados EXIF para reduzir
+  // o tamanho do arquivo e evitar vazamento de dados sensíveis (GPS, etc.).
+  // Com keepExif: true o EXIF restante (câmera, ISO, etc.) é preservado.
+  // Só tem efeito real na saída JPEG; outros codecs ignoram o EXIF.
+  if (!config.keepExif) {
+    decoded.exif = img.ExifData();
   }
 
   // ── 3. Resize ───────────────────────────────────────────────────────────────
@@ -92,8 +100,10 @@ Uint8List _encode(
     case CompressFormat.jpeg:
       return img.encodeJpg(image, quality: config.quality);
     case CompressFormat.png:
-      // quality 100 → level 0 (no compression), quality 0 → level 9 (max compression)
-      final level = ((100 - config.quality) * 9 / 100).round().clamp(0, 9);
+      // quality 100 → level 9 (máxima compressão, menor arquivo)
+      // quality 0   → level 0 (sem compressão,   maior arquivo)
+      // Coerente com JPEG: quality alta = melhor resultado (menor tamanho para PNG).
+      final level = (config.quality * 9 / 100).round().clamp(0, 9);
       return img.encodePng(image, level: level);
     case CompressFormat.gif:
       return img.encodeGif(image);

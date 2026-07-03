@@ -6,10 +6,8 @@ class ResizeDimensions {
   final int width;
   final int height;
 
-  bool get isIdentity => width == 0 && height == 0;
-
   @override
-  String toString() => '${width}×$height';
+  String toString() => '$width×$height';
 }
 
 /// Calculates target dimensions for an image resize operation.
@@ -55,17 +53,4 @@ ResizeDimensions calculateResize({
   final int targetH = math.max(1, (srcHeight / scale).round());
 
   return ResizeDimensions(width: targetW, height: targetH);
-}
-
-/// Whether a resize is actually needed given source dimensions and constraints.
-bool needsResize({
-  required int srcWidth,
-  required int srcHeight,
-  int? maxWidth,
-  int? maxHeight,
-}) {
-  if (maxWidth == null && maxHeight == null) return false;
-  if (maxWidth != null && srcWidth > maxWidth) return true;
-  if (maxHeight != null && srcHeight > maxHeight) return true;
-  return false;
 }

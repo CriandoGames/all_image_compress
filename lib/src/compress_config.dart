@@ -36,20 +36,22 @@ class CompressConfig {
     this.autoCorrectOrientation = true,
     this.interpolation = CompressInterpolation.linear,
     this.keepExif = false,
-  })  : assert(quality >= 0 && quality <= 100, 'quality must be between 0 and 100'),
+  })  : assert(quality >= 0 && quality <= 100,
+            'quality must be between 0 and 100'),
         assert(
           rotate == 0 || rotate == 90 || rotate == 180 || rotate == 270,
           'rotate must be 0, 90, 180, or 270',
         ),
         assert(maxWidth == null || maxWidth > 0, 'maxWidth must be positive'),
-        assert(maxHeight == null || maxHeight > 0, 'maxHeight must be positive');
+        assert(
+            maxHeight == null || maxHeight > 0, 'maxHeight must be positive');
 
   /// Output quality from 0 (worst) to 100 (best). Default: 85.
   ///
   /// - **JPEG**: maps directly to JPEG quality. Values between 70–90
   ///   offer a good size/quality tradeoff.
-  /// - **PNG**: maps to zlib compression level (100=fastest/largest,
-  ///   0=smallest/slowest). Visual quality is always lossless.
+  /// - **PNG**: maps to zlib compression level (100=smallest/slowest,
+  ///   0=largest/fastest). Visual quality is always lossless (PNG is lossless).
   /// - **GIF/BMP/TIFF**: ignored.
   final int quality;
 
@@ -105,7 +107,8 @@ class CompressConfig {
       maxHeight: maxHeight ?? this.maxHeight,
       outputFormat: outputFormat ?? this.outputFormat,
       rotate: rotate ?? this.rotate,
-      autoCorrectOrientation: autoCorrectOrientation ?? this.autoCorrectOrientation,
+      autoCorrectOrientation:
+          autoCorrectOrientation ?? this.autoCorrectOrientation,
       interpolation: interpolation ?? this.interpolation,
       keepExif: keepExif ?? this.keepExif,
     );

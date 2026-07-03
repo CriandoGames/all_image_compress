@@ -303,5 +303,90 @@ void main() {
       expect(progressLog.length, 4);
       expect(progressLog.last, 4);
     });
+
+    test('maxConcurrent: 2 — entrega todos os resultados corretamente',
+        () async {
+      final images = List.generate(6, (_) => makeJpeg(80, 80));
+
+      final results = await AllImageCompress.batchUniform(
+        images: images,
+        config: const CompressConfig(quality: 50),
+        maxConcurrent: 2,
+      );
+
+      expect(results, hasLength(6));
+      expect(results.every((r) => r != null), isTrue);
+    });
+  });
+
+  // ─── Etapa 2: PNG quality direction ───────────────────────────────────────
+
+  group('PNG quality direction', () {
+    test('quality=100 produz arquivo menor que quality=0', () {
+      final source = makePng(300, 300);
+
+      final highQ = AllImageCompress.fromBytesSync(
+        bytes: source,
+        config: const CompressConfig(quality: 100),
+      );
+      final lowQ = AllImageCompress.fromBytesSync(
+        bytes: source,
+        config: const CompressConfig(quality: 0),
+      );
+
+      // quality=100 → level=9 (máxima compressão) → arquivo menor
+      expect(
+        highQ.compressedSizeBytes,
+        lessThanOrEqualTo(lowQ.compressedSizeBytes),
+        reason: 'quality=100 deve gerar PNG menor que quality=0',
+      );
+    });
+  });
+
+  // ─── Etapa 2: keepExif ────────────────────────────────────────────────────
+
+  group('keepExif', () {
+    // Cria um JPEG com EXIF embutido (o image package injeta dados EXIF
+    // no encode quando o objeto Image tem exif populado).
+    Uint8List makeJpegWithExif(int width, int height) {
+      final image = img.Image(width: width, height: height);
+      // Popula um campo EXIF simples (ImageDescription)
+      image.exif.imageIfd[0x010E] = img.IfdValueAscii('test-description');
+      for (var pixel in image) {
+        pixel
+          ..r = pixel.x % 256
+          ..g = pixel.y % 256
+          ..b = 128;
+      }
+      return img.encodeJpg(image, quality: 90);
+    }
+
+    test('keepExif=false (default) remove dados EXIF do output', () {
+      final source = makeJpegWithExif(200, 200);
+
+      final result = AllImageCompress.fromBytesSync(
+        bytes: source,
+        config: const CompressConfig(keepExif: false),
+      );
+
+      final decoded = img.decodeJpg(result.bytes)!;
+      // Após strip, o IFD de imagem não deve conter o tag 0x010E
+      expect(decoded.exif.imageIfd.containsKey(0x010E), isFalse,
+          reason: 'keepExif=false deve remover todos os dados EXIF');
+    });
+
+    test('keepExif=true preserva dados EXIF no output JPEG', () {
+      final source = makeJpegWithExif(200, 200);
+
+      final result = AllImageCompress.fromBytesSync(
+        bytes: source,
+        config: const CompressConfig(keepExif: true),
+      );
+
+      final decoded = img.decodeJpg(result.bytes)!;
+      // O tag ImageDescription (0x010E) deve ter sobrevivido ao encode
+      expect(decoded.exif.imageIfd.containsKey(0x010E), isTrue,
+          reason: 'keepExif=true deve preservar metadados EXIF');
+    });
   });
 }

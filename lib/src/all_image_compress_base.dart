@@ -4,6 +4,7 @@ import 'dart:typed_data';
 import 'compress_config.dart';
 import 'compress_result.dart';
 import 'compress_worker.dart';
+import 'semaphore.dart';
 
 /// A callback invoked during batch compression to report progress.
 ///
@@ -58,35 +59,45 @@ abstract final class AllImageCompress {
     return Isolate.run(() => runCompress(bytes, config));
   }
 
-  /// Compresses multiple images in parallel, each on its own [Isolate].
+  /// Compresses multiple images with a bounded concurrency pool.
   ///
-  /// Each element of [items] is a `(bytes, config)` record — useful when
-  /// different images need different settings.
+  /// Each element of [items] é um record `(bytes, config)` — útil quando
+  /// imagens diferentes precisam de configurações distintas.
   ///
-  /// [onProgress] is called after each item completes (on the calling isolate).
+  /// [maxConcurrent] limita quantos isolates rodam ao mesmo tempo (default: 3).
+  /// Valores maiores aumentam a velocidade mas consomem mais RAM. Para galerias
+  /// grandes, mantenha entre 2–4.
   ///
-  /// If any items fail, a [BatchCompressException] is thrown after all
-  /// items complete. Successful results are still available via
+  /// [onProgress] é chamado na thread chamadora após cada item completar.
+  ///
+  /// Se algum item falhar, [BatchCompressException] é lançado após todos
+  /// completarem. Resultados bem-sucedidos ficam disponíveis em
   /// [BatchCompressException.results].
   static Future<List<CompressResult?>> batch({
     required List<(Uint8List bytes, CompressConfig config)> items,
+    int maxConcurrent = 3,
     BatchProgressCallback? onProgress,
   }) async {
+    assert(maxConcurrent > 0, 'maxConcurrent must be at least 1');
+
     final results = List<CompressResult?>.filled(items.length, null);
     final errors = <int, Object>{};
     int completed = 0;
+    final sem = Semaphore(maxConcurrent);
 
     await Future.wait(
       List.generate(items.length, (i) async {
         final (bytes, config) = items[i];
-        try {
-          results[i] = await fromBytes(bytes: bytes, config: config);
-        } catch (e) {
-          errors[i] = e;
-        } finally {
-          completed++;
-          onProgress?.call(completed, items.length);
-        }
+        await sem.run(() async {
+          try {
+            results[i] = await fromBytes(bytes: bytes, config: config);
+          } catch (e) {
+            errors[i] = e;
+          } finally {
+            completed++;
+            onProgress?.call(completed, items.length);
+          }
+        });
       }),
     );
 
@@ -97,14 +108,16 @@ abstract final class AllImageCompress {
     return results;
   }
 
-  /// Convenience variant of [batch] that applies the same [config] to all items.
+  /// Convenience variant of [batch] com a mesma [config] para todas as imagens.
   static Future<List<CompressResult?>> batchUniform({
     required List<Uint8List> images,
     CompressConfig config = const CompressConfig(),
+    int maxConcurrent = 3,
     BatchProgressCallback? onProgress,
   }) {
     return batch(
       items: images.map((b) => (b, config)).toList(),
+      maxConcurrent: maxConcurrent,
       onProgress: onProgress,
     );
   }
@@ -143,7 +156,8 @@ class BatchCompressException implements Exception {
 
   @override
   String toString() {
-    final lines = errors.entries.map((e) => '  [${e.key}]: ${e.value}').join('\n');
+    final lines =
+        errors.entries.map((e) => '  [${e.key}]: ${e.value}').join('\n');
     return 'BatchCompressException: ${errors.length} item(s) failed:\n$lines';
   }
 }
