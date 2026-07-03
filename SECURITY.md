@@ -1,15 +1,15 @@
 # Security Policy
 
-## Supported Versions
+## Versões com Suporte
 
-| Version | Supported          |
+| Versão  | Suportada          |
 | ------- | ------------------ |
-| 4.2.0   | :white_check_mark: |
-| < 4.0.3 | :x:                |
+| 1.0.x   | :white_check_mark: |
+| < 1.0.0 | :x:                |
 
-## Reporting a Vulnerability
+## Reportando uma Vulnerabilidade
 
-Abra uma [Issue pública](../../issues/new) descrevendo a vulnerabilidade encontrada.
+Abra uma [Issue](../../issues/new) descrevendo a vulnerabilidade encontrada.
 
 Após o recebimento:
 - Você receberá uma resposta em até **7 dias**
