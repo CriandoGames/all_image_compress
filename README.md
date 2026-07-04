@@ -9,6 +9,10 @@
 </p>
 
 <p align="center">
+  🌐 <a href="README.en.md">Read this in English</a>
+</p>
+
+<p align="center">
   <a href="https://pub.dev/packages/all_image_compress"><img src="https://img.shields.io/pub/v/all_image_compress.svg?label=pub.dev" alt="pub version"></a>
   <a href="https://pub.dev/packages/all_image_compress/score"><img src="https://img.shields.io/pub/likes/all_image_compress?label=likes" alt="pub likes"></a>
   <a href="https://pub.dev/packages/all_image_compress/score"><img src="https://img.shields.io/pub/points/all_image_compress?label=pub%20points" alt="pub points"></a>

@@ -1,3 +1,8 @@
+## 1.0.1
+
+- Added `topics` to `pubspec.yaml` (image, compression, image-processing, flutter, dart) for pub.dev discoverability
+- Added English documentation (`README.en.md`), with language links between it and the Portuguese `README.md`
+
 ## 1.0.0
 
 - Initial release
