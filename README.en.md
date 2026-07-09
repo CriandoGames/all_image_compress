@@ -82,6 +82,35 @@ await File(outputPath).writeAsBytes(result.bytes);
 
 ---
 
+## Resize Helpers
+
+Use these shortcuts when you want to express the resize intent without manually building `CompressConfig`:
+
+```dart
+final thumb = await AllImageCompress.fitWidth(
+  bytes: rawImageBytes,
+  maxWidth: 320,
+  config: CompressConfig(quality: 80),
+);
+
+final preview = await AllImageCompress.fitHeight(
+  bytes: rawImageBytes,
+  maxHeight: 720,
+);
+
+final contained = await AllImageCompress.contain(
+  bytes: rawImageBytes,
+  maxWidth: 1280,
+  maxHeight: 720,
+);
+```
+
+Synchronous variants are also available: `fitWidthSync`, `fitHeightSync`, and `containSync` for use outside the UI thread.
+
+Format note: WebP is decode-only in this version. If `outputFormat` is `null`, WebP inputs are re-encoded as JPEG. AVIF and HEIC are not currently supported by the pure-Dart codec backend used by this package.
+
+---
+
 ## 📱 File Helpers (non-web)
 
 ```dart

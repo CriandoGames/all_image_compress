@@ -33,6 +33,20 @@ Uint8List makePng(int width, int height) {
   return img.encodePng(image);
 }
 
+/// Creates a PNG with transparent pixels to guard alpha-channel handling.
+Uint8List makePngWithTransparency(int width, int height) {
+  final image = img.Image(width: width, height: height, numChannels: 4);
+  for (var pixel in image) {
+    final transparent = pixel.x < width ~/ 2;
+    pixel
+      ..r = transparent ? 255 : 20
+      ..g = transparent ? 0 : 180
+      ..b = transparent ? 0 : 40
+      ..a = transparent ? 0 : 255;
+  }
+  return img.encodePng(image);
+}
+
 // ─── Tests ───────────────────────────────────────────────────────────────────
 
 void main() {
@@ -145,6 +159,32 @@ void main() {
       expect(ratio, closeTo(4 / 3, 0.05));
     });
 
+    test('preserves aspect ratio for portrait and panoramic images', () {
+      final cases = <({int width, int height, int maxWidth, int maxHeight})>[
+        (width: 600, height: 2400, maxWidth: 500, maxHeight: 500),
+        (width: 2400, height: 600, maxWidth: 500, maxHeight: 500),
+        (width: 3024, height: 4032, maxWidth: 1080, maxHeight: 1920),
+      ];
+
+      for (final testCase in cases) {
+        final result = AllImageCompress.fromBytesSync(
+          bytes: makeJpeg(testCase.width, testCase.height),
+          config: CompressConfig(
+            maxWidth: testCase.maxWidth,
+            maxHeight: testCase.maxHeight,
+          ),
+        );
+
+        expect(result.width, lessThanOrEqualTo(testCase.maxWidth));
+        expect(result.height, lessThanOrEqualTo(testCase.maxHeight));
+        expect(
+          result.width / result.height,
+          closeTo(testCase.width / testCase.height, 0.02),
+          reason: '${testCase.width}x${testCase.height} must not be squished',
+        );
+      }
+    });
+
     test('no resize when image is within constraints', () {
       final result = AllImageCompress.fromBytesSync(
         bytes: makeJpeg(400, 300),
@@ -201,7 +241,9 @@ void main() {
       expect(img.decodePng(result.bytes), isNotNull);
     });
 
-    test('quality=100 (level 9, max compression) produces smaller PNG than quality=0', () {
+    test(
+        'quality=100 (level 9, max compression) produces smaller PNG than quality=0',
+        () {
       final highQ = AllImageCompress.fromBytesSync(
         bytes: sourcePng,
         config: const CompressConfig(quality: 100), // level 9 → max compression
@@ -213,6 +255,25 @@ void main() {
       // quality=100 → zlib level 9 → smallest file
       expect(highQ.compressedSizeBytes,
           lessThanOrEqualTo(lowQ.compressedSizeBytes));
+    });
+
+    test('preserves transparent pixels when PNG remains PNG', () {
+      final result = AllImageCompress.fromBytesSync(
+        bytes: makePngWithTransparency(64, 64),
+        config: const CompressConfig(
+          maxWidth: 32,
+          outputFormat: CompressFormat.png,
+        ),
+      );
+
+      final decoded = img.decodePng(result.bytes)!;
+      final hasTransparentPixel = decoded.any((pixel) => pixel.a < 255);
+      final hasVisiblePixel = decoded.any((pixel) => pixel.a > 0);
+
+      expect(result.format, CompressFormat.png);
+      expect(hasTransparentPixel, isTrue,
+          reason: 'transparent PNG pixels must not be flattened to black');
+      expect(hasVisiblePixel, isTrue);
     });
   });
 
@@ -276,6 +337,62 @@ void main() {
     });
   });
 
+  group('AllImageCompress convenience resize APIs', () {
+    test('fitWidth scales down to the requested width', () async {
+      final result = await AllImageCompress.fitWidth(
+        bytes: makeJpeg(1200, 800),
+        maxWidth: 300,
+        config: const CompressConfig(quality: 70),
+      );
+
+      expect(result.width, 300);
+      expect(result.height, 200);
+      expect(result.format, CompressFormat.jpeg);
+    });
+
+    test('fitHeightSync scales down to the requested height', () {
+      final result = AllImageCompress.fitHeightSync(
+        bytes: makeJpeg(1200, 800),
+        maxHeight: 200,
+      );
+
+      expect(result.width, 300);
+      expect(result.height, 200);
+    });
+
+    test('containSync fits both constraints without upscaling', () {
+      final large = AllImageCompress.containSync(
+        bytes: makeJpeg(1600, 900),
+        maxWidth: 500,
+        maxHeight: 500,
+      );
+      final small = AllImageCompress.containSync(
+        bytes: makeJpeg(100, 80),
+        maxWidth: 500,
+        maxHeight: 500,
+      );
+
+      expect(large.width, 500);
+      expect(large.height, 281);
+      expect(small.width, 100);
+      expect(small.height, 80);
+    });
+
+    test('contain keeps output format from the supplied config', () async {
+      final result = await AllImageCompress.contain(
+        bytes: makePng(500, 500),
+        maxWidth: 100,
+        maxHeight: 100,
+        config: const CompressConfig(outputFormat: CompressFormat.jpeg),
+      );
+
+      expect(result.width, 100);
+      expect(result.height, 100);
+      expect(result.format, CompressFormat.jpeg);
+      expect(img.decodeJpg(result.bytes), isNotNull);
+    });
+  });
+
   group('AllImageCompress.batchUniform', () {
     test('processes all images', () async {
       final images = List.generate(3, (i) => makeJpeg(200 + i * 50, 150));
@@ -316,6 +433,33 @@ void main() {
 
       expect(results, hasLength(6));
       expect(results.every((r) => r != null), isTrue);
+    });
+
+    test('throws after all items finish and exposes partial results', () async {
+      final progressLog = <int>[];
+
+      try {
+        await AllImageCompress.batchUniform(
+          images: [
+            makeJpeg(120, 80),
+            Uint8List.fromList('not an image'.codeUnits),
+            makePng(90, 90),
+          ],
+          config: const CompressConfig(maxWidth: 60),
+          maxConcurrent: 2,
+          onProgress: (done, total) => progressLog.add(done),
+        );
+        fail('Expected a BatchCompressException');
+      } on BatchCompressException catch (error) {
+        expect(error.errors.keys, contains(1));
+        expect(error.results, hasLength(3));
+        expect(error.results[0], isNotNull);
+        expect(error.results[1], isNull);
+        expect(error.results[2], isNotNull);
+      }
+
+      expect(progressLog, hasLength(3));
+      expect(progressLog.last, 3);
     });
   });
 

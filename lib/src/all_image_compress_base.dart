@@ -59,6 +59,49 @@ abstract final class AllImageCompress {
     return Isolate.run(() => runCompress(bytes, config));
   }
 
+  /// Compresses an image and scales it down to fit [maxWidth].
+  ///
+  /// The original aspect ratio is preserved and the image is never upscaled.
+  static Future<CompressResult> fitWidth({
+    required Uint8List bytes,
+    required int maxWidth,
+    CompressConfig config = const CompressConfig(),
+  }) {
+    return fromBytes(
+      bytes: bytes,
+      config: config.copyWith(maxWidth: maxWidth),
+    );
+  }
+
+  /// Compresses an image and scales it down to fit [maxHeight].
+  ///
+  /// The original aspect ratio is preserved and the image is never upscaled.
+  static Future<CompressResult> fitHeight({
+    required Uint8List bytes,
+    required int maxHeight,
+    CompressConfig config = const CompressConfig(),
+  }) {
+    return fromBytes(
+      bytes: bytes,
+      config: config.copyWith(maxHeight: maxHeight),
+    );
+  }
+
+  /// Compresses an image so it fits inside [maxWidth] and [maxHeight].
+  ///
+  /// The original aspect ratio is preserved and the image is never upscaled.
+  static Future<CompressResult> contain({
+    required Uint8List bytes,
+    required int maxWidth,
+    required int maxHeight,
+    CompressConfig config = const CompressConfig(),
+  }) {
+    return fromBytes(
+      bytes: bytes,
+      config: config.copyWith(maxWidth: maxWidth, maxHeight: maxHeight),
+    );
+  }
+
   /// Compresses multiple images with a bounded concurrency pool.
   ///
   /// Each element of [items] é um record `(bytes, config)` — útil quando
@@ -136,6 +179,43 @@ abstract final class AllImageCompress {
     CompressConfig config = const CompressConfig(),
   }) {
     return runCompress(bytes, config);
+  }
+
+  /// Synchronous variant of [fitWidth].
+  static CompressResult fitWidthSync({
+    required Uint8List bytes,
+    required int maxWidth,
+    CompressConfig config = const CompressConfig(),
+  }) {
+    return fromBytesSync(
+      bytes: bytes,
+      config: config.copyWith(maxWidth: maxWidth),
+    );
+  }
+
+  /// Synchronous variant of [fitHeight].
+  static CompressResult fitHeightSync({
+    required Uint8List bytes,
+    required int maxHeight,
+    CompressConfig config = const CompressConfig(),
+  }) {
+    return fromBytesSync(
+      bytes: bytes,
+      config: config.copyWith(maxHeight: maxHeight),
+    );
+  }
+
+  /// Synchronous variant of [contain].
+  static CompressResult containSync({
+    required Uint8List bytes,
+    required int maxWidth,
+    required int maxHeight,
+    CompressConfig config = const CompressConfig(),
+  }) {
+    return fromBytesSync(
+      bytes: bytes,
+      config: config.copyWith(maxWidth: maxWidth, maxHeight: maxHeight),
+    );
   }
 }
 

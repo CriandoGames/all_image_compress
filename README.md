@@ -82,6 +82,71 @@ await File(outputPath).writeAsBytes(result.bytes);
 
 ---
 
+## Helpers de Resize
+
+Use estes atalhos quando quiser expressar a intencao sem montar manualmente `CompressConfig`:
+
+```dart
+final thumb = await AllImageCompress.fitWidth(
+  bytes: rawImageBytes,
+  maxWidth: 320,
+  config: CompressConfig(quality: 80),
+);
+
+final preview = await AllImageCompress.fitHeight(
+  bytes: rawImageBytes,
+  maxHeight: 720,
+);
+
+final contained = await AllImageCompress.contain(
+  bytes: rawImageBytes,
+  maxWidth: 1280,
+  maxHeight: 720,
+);
+```
+
+Tambem existem as variantes sincronas `fitWidthSync`, `fitHeightSync` e `containSync` para uso fora da UI thread.
+
+Nota de formatos: WebP e suportado apenas como entrada nesta versao. Se `outputFormat` for `null`, entradas WebP sao reencodadas como JPEG. AVIF e HEIC ainda nao sao suportados pelo backend Dart puro usado pelo pacote.
+
+---
+
+## Benchmark visual
+
+Resultados de exemplo gerados localmente com `dart run benchmark/image_benchmark.dart`.
+
+<p align="center">
+  <img src="assets/benchmark_results.svg" alt="Benchmark com reducao de tamanho e tempo de execucao" width="100%"/>
+</p>
+
+| Caso | Saida | Tamanho | Sync | Async |
+|------|-------|---------|------|-------|
+| `jpeg_photo_4000x3000_to_1920` | `1920x1440 jpeg` | `5.80MB -> 1.30MB` | `1082ms` | `1143ms` |
+| `png_alpha_2500x2500_to_1000` | `1000x1000 png` | `29.5KB -> 14.1KB` | `454ms` | `407ms` |
+
+> Benchmarks variam por maquina, modo de build e conteudo da imagem. Use estes numeros como exemplo visual e rode o script no seu ambiente para comparar.
+
+### Fotos grandes de celular
+
+Casos sinteticos de alta resolucao, proximos de fotos grandes de iPhone/Samsung:
+
+| Caso | Entrada | Saida | Reducao | Sync | Async |
+|------|---------|-------|---------|------|-------|
+| `iphone_48mp_8064x6048_to_1920` | `51.76MB` | `3.24MB` | `93.7%` | `5064ms` | `5531ms` |
+| `samsung_50mp_8160x6120_to_1920` | `60.92MB` | `3.26MB` | `94.7%` | `5733ms` | `5934ms` |
+
+```bash
+dart run benchmark/phone_large_benchmark.dart
+```
+
+Tambem existe um teste pesado opcional para validar imagem acima de 50MB:
+
+```bash
+flutter test test/large_image_compress_test.dart --dart-define=RUN_LARGE_IMAGE_TESTS=true
+```
+
+---
+
 ## 📱 Helpers para Arquivo (não-web)
 
 ```dart

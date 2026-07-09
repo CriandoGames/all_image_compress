@@ -1,3 +1,11 @@
+## Unreleased
+
+- Added convenience resize APIs: `fitWidth`, `fitHeight`, `contain` and sync variants.
+- Added regression tests for PNG transparency, portrait/panoramic aspect ratio, and partial batch failures.
+- Documented WebP decode-only behavior and current AVIF/HEIC limitation.
+- Added a local benchmark script for large-image compression checks.
+- Added optional 50MB+ phone-image performance test and phone-sized benchmark cases.
+
 ## 1.0.1
 
 - Added `topics` to `pubspec.yaml` (image, compression, image-processing, flutter, dart) for pub.dev discoverability

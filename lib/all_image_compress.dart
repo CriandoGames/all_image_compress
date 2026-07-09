@@ -7,8 +7,14 @@
 /// ### Supported input formats
 /// JPEG, PNG, GIF, BMP, TIFF, WebP, TGA, ICO, PVR
 ///
+/// WebP is decode-only in pure Dart here. When no output format is provided,
+/// WebP inputs are re-encoded as JPEG.
+///
 /// ### Supported output formats
 /// JPEG, PNG, GIF, BMP, TIFF
+///
+/// AVIF and HEIC are not currently supported by the pure-Dart codec backend
+/// used by this package.
 ///
 /// ### Basic usage
 /// ```dart
@@ -28,6 +34,20 @@
 /// // → "3.20MB → 410.50KB (-87.5%) 1920×1080px [JPEG]"
 ///
 /// final Image widget = Image.memory(result.bytes);
+/// ```
+///
+/// ### Convenience resize helpers
+/// ```dart
+/// final thumbnail = await AllImageCompress.fitWidth(
+///   bytes: rawImageBytes,
+///   maxWidth: 320,
+/// );
+///
+/// final contained = await AllImageCompress.contain(
+///   bytes: rawImageBytes,
+///   maxWidth: 1280,
+///   maxHeight: 720,
+/// );
 /// ```
 ///
 /// ### File access (non-web platforms only)
