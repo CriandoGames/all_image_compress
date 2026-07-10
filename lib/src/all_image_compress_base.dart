@@ -1,6 +1,8 @@
 import 'dart:isolate';
 import 'dart:typed_data';
 
+import 'package:all_image_compress/src/compress_worker_rust.dart';
+
 import 'compress_config.dart';
 import 'compress_result.dart';
 import 'compress_worker.dart';
@@ -57,6 +59,14 @@ abstract final class AllImageCompress {
     CompressConfig config = const CompressConfig(),
   }) {
     return Isolate.run(() => runCompress(bytes, config));
+  }
+
+  // ─── API do Rust (Nova, para você comparar) ───
+  static Future<CompressResult> fromBytesRust({
+    required Uint8List bytes,
+    CompressConfig config = const CompressConfig(),
+  }) {
+    return Isolate.run(() => runCompressRust(bytes, config));
   }
 
   /// Compresses multiple images with a bounded concurrency pool.

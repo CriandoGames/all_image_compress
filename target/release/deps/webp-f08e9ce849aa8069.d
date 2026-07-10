@@ -1,0 +1,12 @@
+/Users/user/Documents/personal/all_image_compress/target/release/deps/webp-f08e9ce849aa8069.d: /Users/user/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/webp-0.3.1/src/lib.rs /Users/user/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/webp-0.3.1/src/animation_encoder.rs /Users/user/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/webp-0.3.1/src/decoder.rs /Users/user/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/webp-0.3.1/src/animation_decoder.rs /Users/user/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/webp-0.3.1/src/encoder.rs /Users/user/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/webp-0.3.1/src/shared.rs
+
+/Users/user/Documents/personal/all_image_compress/target/release/deps/libwebp-f08e9ce849aa8069.rlib: /Users/user/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/webp-0.3.1/src/lib.rs /Users/user/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/webp-0.3.1/src/animation_encoder.rs /Users/user/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/webp-0.3.1/src/decoder.rs /Users/user/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/webp-0.3.1/src/animation_decoder.rs /Users/user/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/webp-0.3.1/src/encoder.rs /Users/user/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/webp-0.3.1/src/shared.rs
+
+/Users/user/Documents/personal/all_image_compress/target/release/deps/libwebp-f08e9ce849aa8069.rmeta: /Users/user/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/webp-0.3.1/src/lib.rs /Users/user/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/webp-0.3.1/src/animation_encoder.rs /Users/user/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/webp-0.3.1/src/decoder.rs /Users/user/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/webp-0.3.1/src/animation_decoder.rs /Users/user/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/webp-0.3.1/src/encoder.rs /Users/user/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/webp-0.3.1/src/shared.rs
+
+/Users/user/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/webp-0.3.1/src/lib.rs:
+/Users/user/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/webp-0.3.1/src/animation_encoder.rs:
+/Users/user/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/webp-0.3.1/src/decoder.rs:
+/Users/user/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/webp-0.3.1/src/animation_decoder.rs:
+/Users/user/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/webp-0.3.1/src/encoder.rs:
+/Users/user/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/webp-0.3.1/src/shared.rs:

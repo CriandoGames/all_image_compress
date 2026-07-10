@@ -19,6 +19,8 @@ enum CompressFormat {
 
   /// TIFF — flexible format used in professional workflows.
   tiff,
+
+  webp,
 }
 
 /// Extension with helpers for [CompressFormat].
@@ -36,6 +38,8 @@ extension CompressFormatExtension on CompressFormat {
         return 'bmp';
       case CompressFormat.tiff:
         return 'tiff';
+      case CompressFormat.webp:
+        return 'webp';
     }
   }
 
@@ -52,6 +56,8 @@ extension CompressFormatExtension on CompressFormat {
         return 'image/bmp';
       case CompressFormat.tiff:
         return 'image/tiff';
+      case CompressFormat.webp:
+        return 'image/webp';
     }
   }
 

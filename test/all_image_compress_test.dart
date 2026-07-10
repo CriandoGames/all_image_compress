@@ -1,3 +1,4 @@
+import 'dart:io';
 import 'dart:typed_data';
 
 import 'package:flutter_test/flutter_test.dart';
@@ -201,7 +202,9 @@ void main() {
       expect(img.decodePng(result.bytes), isNotNull);
     });
 
-    test('quality=100 (level 9, max compression) produces smaller PNG than quality=0', () {
+    test(
+        'quality=100 (level 9, max compression) produces smaller PNG than quality=0',
+        () {
       final highQ = AllImageCompress.fromBytesSync(
         bytes: sourcePng,
         config: const CompressConfig(quality: 100), // level 9 → max compression
@@ -261,18 +264,155 @@ void main() {
   });
 
   group('AllImageCompress.fromBytes (async / isolate)', () {
-    test('returns same logical result as sync version', () async {
-      final source = makeJpeg(500, 400);
-      const config = CompressConfig(quality: 75, maxWidth: 300);
+    group('JPEG', () {
+      test('returns same logical result as sync version', () async {
+        final file = File('assets/test_images/image_test_jpeg.jpg');
+        final source = file.readAsBytesSync();
+        const config = CompressConfig(
+            quality: 75, maxWidth: 1920, outputFormat: CompressFormat.jpeg);
 
-      final asyncResult =
-          await AllImageCompress.fromBytes(bytes: source, config: config);
-      final syncResult =
-          AllImageCompress.fromBytesSync(bytes: source, config: config);
+        final stopwatchDart = Stopwatch()..start();
+        final asyncResult =
+            await AllImageCompress.fromBytes(bytes: source, config: config);
+        final syncResult =
+            AllImageCompress.fromBytesSync(bytes: source, config: config);
+        stopwatchDart.stop();
 
-      expect(asyncResult.width, syncResult.width);
-      expect(asyncResult.height, syncResult.height);
-      expect(asyncResult.format, syncResult.format);
+        print('dart: JPEG');
+        print('original: ${asyncResult.originalSizeBytes}');
+        print('novo: ${asyncResult.compressedSizeBytes}');
+        print('tempo: ${stopwatchDart.elapsedMilliseconds}ms ');
+
+        expect(asyncResult.width, syncResult.width);
+        expect(asyncResult.height, syncResult.height);
+        expect(asyncResult.format, syncResult.format);
+      });
+
+      test('returns same logical result as sync version', () async {
+        final file = File('assets/test_images/image_test_jpeg.jpg');
+        final source = file.readAsBytesSync();
+        const config = CompressConfig(
+            quality: 75, maxWidth: 1920, outputFormat: CompressFormat.jpeg);
+
+        final stopwatchRust = Stopwatch()..start();
+        final asyncResult =
+            await AllImageCompress.fromBytesRust(bytes: source, config: config);
+        final syncResult =
+            AllImageCompress.fromBytesSync(bytes: source, config: config);
+        stopwatchRust.stop();
+
+        print('rust ffi: JPEG');
+        print('original: ${asyncResult.originalSizeBytes}');
+        print('novo: ${asyncResult.compressedSizeBytes}');
+        print('tempo: ${stopwatchRust.elapsedMilliseconds}ms ');
+
+        expect(asyncResult.width, syncResult.width);
+        expect(asyncResult.height, syncResult.height);
+        expect(asyncResult.format, syncResult.format);
+      });
+    });
+    group('PNG', () {
+      test('returns same logical result as sync version', () async {
+        final file = File('assets/test_images/image_test_png.png');
+        final source = file.readAsBytesSync();
+        const config = CompressConfig(
+            quality: 75, maxWidth: 1920, outputFormat: CompressFormat.png);
+
+        final stopwatchDart = Stopwatch()..start();
+        final asyncResult = await AllImageCompress.fromBytes(
+          bytes: source,
+          config: config,
+        );
+        final syncResult =
+            AllImageCompress.fromBytesSync(bytes: source, config: config);
+        stopwatchDart.stop();
+
+        print('dart: PNG');
+        print('original: ${asyncResult.originalSizeBytes}');
+        print('novo: ${asyncResult.compressedSizeBytes}');
+        print('novo: ${asyncResult.compressedSizeMb}');
+        print('tempo: ${stopwatchDart.elapsedMilliseconds}ms ');
+
+        expect(asyncResult.width, syncResult.width);
+        expect(asyncResult.height, syncResult.height);
+        expect(asyncResult.format, syncResult.format);
+      });
+
+      test('returns same logical result as sync version', () async {
+        final file = File('assets/test_images/image_test_png.png');
+        final source = file.readAsBytesSync();
+        const config = CompressConfig(
+            quality: 75, maxWidth: 1920, outputFormat: CompressFormat.png);
+
+        final stopwatchRust = Stopwatch()..start();
+        final asyncResult =
+            await AllImageCompress.fromBytesRust(bytes: source, config: config);
+        final syncResult =
+            AllImageCompress.fromBytesSync(bytes: source, config: config);
+        stopwatchRust.stop();
+
+        print('rust ffi: PNG');
+        print('original: ${asyncResult.originalSizeBytes}');
+        print('novo: ${asyncResult.compressedSizeBytes}');
+        print('novo: ${asyncResult.compressedSizeMb}');
+        print('tempo: ${stopwatchRust.elapsedMilliseconds}ms ');
+
+        expect(asyncResult.width, syncResult.width);
+        expect(asyncResult.height, syncResult.height);
+        expect(asyncResult.format, syncResult.format);
+      });
+    });
+
+    group('GIF', () {
+      test('returns same logical result as sync version', () async {
+        final file = File('assets/test_images/test_image_gif.gif');
+        final source = file.readAsBytesSync();
+        const config = CompressConfig(
+            quality: 75, maxWidth: 1920, outputFormat: CompressFormat.png);
+
+        final stopwatchDart = Stopwatch()..start();
+        final asyncResult = await AllImageCompress.fromBytes(
+          bytes: source,
+          config: config,
+        );
+        final syncResult =
+            AllImageCompress.fromBytesSync(bytes: source, config: config);
+        stopwatchDart.stop();
+
+        print('dart: GIF');
+        print('original: ${asyncResult.originalSizeBytes}');
+        print('novo: ${asyncResult.compressedSizeBytes}');
+        print('novo: ${asyncResult.compressedSizeMb}');
+        print('tempo: ${stopwatchDart.elapsedMilliseconds}ms ');
+
+        expect(asyncResult.width, syncResult.width);
+        expect(asyncResult.height, syncResult.height);
+        expect(asyncResult.format, syncResult.format);
+      });
+
+      test('returns same logical result as sync version', () async {
+        final file = File('assets/test_images/test_image_gif.gif');
+        final source = file.readAsBytesSync();
+        const config = CompressConfig(
+            quality: 75, maxWidth: 1920, outputFormat: CompressFormat.png);
+
+        final stopwatchRust = Stopwatch()..start();
+        final asyncResult =
+            await AllImageCompress.fromBytesRust(bytes: source, config: config);
+        final syncResult =
+            AllImageCompress.fromBytesSync(bytes: source, config: config);
+        stopwatchRust.stop();
+
+        print('rust ffi: GIF');
+        print('original: ${asyncResult.originalSizeBytes}');
+        print('novo: ${asyncResult.compressedSizeBytes}');
+        print('novo: ${asyncResult.compressedSizeMb}');
+        print('tempo: ${stopwatchRust.elapsedMilliseconds}ms ');
+
+        expect(asyncResult.width, syncResult.width);
+        expect(asyncResult.height, syncResult.height);
+        expect(asyncResult.format, syncResult.format);
+      });
     });
   });
 

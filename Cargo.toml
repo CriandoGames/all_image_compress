@@ -1,0 +1,24 @@
+[package]
+name = "all_image_compress"
+version = "0.1.0"
+edition = "2021"
+
+[lib]
+name = "image_compressor"
+path = "lib/src/lib.rs" # <--- Essa linha diz ao Cargo exatamente onde está o arquivo!
+crate-type = ["cdylib", "rlib"]
+
+[dependencies]
+# Versão atualizada e estável da biblioteca de manipulação de imagens
+image = { version = "0.25.10", default-features = false, features = ["jpeg", "png", "gif", "bmp", "tiff"] }
+oxipng = "9.1"
+# Crate dedicada para compressão WebP de alta performance com perda (lossy) e sem perda (lossless)
+webp = "0.3.1"
+
+[profile.release]
+# Otimizações cruciais para que a biblioteca nativa gerada fique extremamente leve e rápida:
+opt-level = 3             # Otimização máxima de velocidade
+lto = true                # Link-Time Optimization (reduz o tamanho do binário e otimiza chamadas)
+codegen-units = 1         # Permite maior otimização do compilador
+panic = "abort"           # Remove overhead de stack unwinding em caso de pânico
+strip = true              # Remove símbolos de debug do binário final, reduzindo drasticamente o tamanho do arquivo

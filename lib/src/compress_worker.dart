@@ -111,6 +111,8 @@ Uint8List _encode(
       return img.encodeBmp(image);
     case CompressFormat.tiff:
       return img.encodeTiff(image);
+    case CompressFormat.webp:
+      return img.encodeWebP(image);
   }
 }
 
@@ -133,7 +135,7 @@ CompressFormat _resolveOutputFormat(
       return CompressFormat.tiff;
     case 'webp':
       // WebP output is not supported in pure Dart — default to JPEG
-      return CompressFormat.jpeg;
+      return CompressFormat.webp;
     default:
       // Unknown input → default to JPEG (best compression for photos)
       return CompressFormat.jpeg;

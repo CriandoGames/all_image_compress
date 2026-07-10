@@ -30,6 +30,9 @@ class CompressResult {
   /// Size of the compressed output in bytes.
   int get compressedSizeBytes => bytes.length;
 
+  /// Size in mb
+  double get compressedSizeMb => (bytes.length / (1024 * 1024));
+
   /// Ratio of compressed size to original size (0.0–1.0+).
   /// Values below 1.0 indicate size reduction.
   double get compressionRatio =>
