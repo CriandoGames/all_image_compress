@@ -1,6 +1,6 @@
 name: all_image_compress
 description: "A powerful, pure-Dart image compression library for Flutter. Supports JPEG, PNG, GIF, BMP, TIFF and WebP decode. Runs in Isolates to avoid UI jank. No native code required."
-version: 1.0.1
+version: 1.0.2
 homepage: https://github.com/CriandoGames/all_image_compress
 repository: https://github.com/CriandoGames/all_image_compress
 topics:

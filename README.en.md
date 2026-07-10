@@ -39,7 +39,7 @@ Add to your `pubspec.yaml`:
 
 ```yaml
 dependencies:
-  all_image_compress: ^1.0.0
+  all_image_compress: ^1.0.2
 ```
 
 Then run:

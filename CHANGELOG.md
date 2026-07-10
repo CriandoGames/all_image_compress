@@ -1,4 +1,4 @@
-## Unreleased
+## 1.0.2
 
 - Added convenience resize APIs: `fitWidth`, `fitHeight`, `contain` and sync variants.
 - Added regression tests for PNG transparency, portrait/panoramic aspect ratio, and partial batch failures.
